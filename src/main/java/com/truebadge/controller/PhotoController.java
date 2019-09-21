@@ -1,13 +1,16 @@
 package com.truebadge.controller;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,20 +38,55 @@ public class PhotoController {
 	public Photo getPhotoById(@PathVariable("id") ObjectId id) {
 		return repository.findBy_id(id);
 	}
-	
-	@RequestMapping(value="/upload" ,method = RequestMethod.POST)
+
+	// Upload Photo
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
+		try {
+			Photo demoPhoto = new Photo();
+			demoPhoto.setTitle(title);
+			demoPhoto.setImage(new Binary(BsonBinarySubType.BINARY, multipart.getBytes()));
+			repository.save(demoPhoto);
+			System.out.println(demoPhoto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "failure";
+		}
+		return "success";
+	}
+
+	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
+	public String retrieveFile(@RequestBody JSONObject id){
+	    Photo demoPhoto = repository.findBy_id(new ObjectId((String)id.get("id")));
+	    Binary document = demoPhoto.getImage();
+	    String title = demoPhoto.getTitle();
 	    try {
-	        Photo demoPhoto = new Photo();
-	        demoPhoto.setTitle(title);
-	        demoPhoto.setImage(new Binary(BsonBinarySubType.BINARY, multipart.getBytes()));
-	        repository.save(demoPhoto);
-	        System.out.println(demoPhoto);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "failure";
+	    	 if(document != null) {
+	    		 //Testing by printing out to desktop
+	 	        FileOutputStream fileOuputStream = null;
+	 	        try {
+	 	            fileOuputStream = new FileOutputStream("/Users/michielu/Desktop/"+title+".jpg"); // store extention? 
+	 	            fileOuputStream.write(document.getData());
+	 	        } catch (Exception e) {
+	 	            e.printStackTrace();
+	 	            return "failure";
+	 	        } finally {
+	 	            if (fileOuputStream != null) {
+	 	                try {
+	 	                    fileOuputStream.close();
+	 	                } catch (IOException e) {
+	 	                    e.printStackTrace();
+	 	                    return "failure";
+	 	                }
+	 	            }
+	 	        }
+	 	    }
+	 	    return "success";
+
+	    } catch(Exception e) {
+	    	e.printStackTrace();
+	    	return "failure";
 	    }
-	    return "success";
 	}
 
 }
