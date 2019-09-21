@@ -27,9 +27,7 @@ public class Photo {
 	    public String get_id() { return _id.toHexString(); }
 	    public void set_id(ObjectId _id) { this._id = _id; }
 
-		public String getTitle() {
-			return title;
-		}
+		public String getTitle() {return title;	}
 		public void setTitle(String title) {
 			this.title = title;
 		}
