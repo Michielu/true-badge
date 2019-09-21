@@ -26,6 +26,8 @@ import com.truebadge.repositories.PhotoRepository;
 public class PhotoController {
 	@Autowired
 	private PhotoRepository repository;
+	
+	private String LOCAL_DESKTOP = "/Users/michielu/Desktop/";
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Photo addPhoto(@Valid @RequestBody Photo photo) {
@@ -65,27 +67,27 @@ public class PhotoController {
 	    		 //Testing by printing out to desktop
 	 	        FileOutputStream fileOuputStream = null;
 	 	        try {
-	 	            fileOuputStream = new FileOutputStream("/Users/michielu/Desktop/"+title+".jpg"); // store extention? 
+	 	            fileOuputStream = new FileOutputStream(LOCAL_DESKTOP +title+".jpg"); // store extention? -- not needed bc I'll never download it like this
 	 	            fileOuputStream.write(document.getData());
 	 	        } catch (Exception e) {
 	 	            e.printStackTrace();
-	 	            return "failure";
+	 	            return "failure - filtoutputstream writing error"; //TODO handle failures better 
 	 	        } finally {
 	 	            if (fileOuputStream != null) {
 	 	                try {
 	 	                    fileOuputStream.close();
 	 	                } catch (IOException e) {
 	 	                    e.printStackTrace();
-	 	                    return "failure";
+	 	                    return "failure - could not close filestream";
 	 	                }
 	 	            }
 	 	        }
 	 	    }
-	 	    return "success";
+	 	    return "success - image retrieved";
 
 	    } catch(Exception e) {
 	    	e.printStackTrace();
-	    	return "failure";
+	    	return "failure - could not get photo";
 	    }
 	}
 
