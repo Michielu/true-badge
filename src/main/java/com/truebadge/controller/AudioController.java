@@ -3,14 +3,11 @@ package com.truebadge.controller;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.validation.Valid;
-
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.truebadge.interfaces.MediaFileControllerInterface;
 import com.truebadge.models.Audio;
+import com.truebadge.models.MediaFileImpl;
 import com.truebadge.repositories.AudioRepository;
 
 @RestController
 @RequestMapping("/audios")
-public class AudioController {
+public class AudioController implements MediaFileControllerInterface{
 	@Autowired
 	private AudioRepository repository;
 	
@@ -47,8 +46,8 @@ public class AudioController {
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
 	public String retrieveFile(@RequestBody JSONObject id){
-	    Audio demoAudio = repository.findBy_id(new ObjectId((String)id.get("id")));
-	    Binary document = demoAudio.getAudio();
+	    MediaFileImpl demoAudio = repository.findBy_id(new ObjectId((String)id.get("id")));
+	    Binary document = ((Audio) demoAudio).getAudio();
 	    String title = demoAudio.getTitle();
 	    try {
 	    	 if(document != null) {
