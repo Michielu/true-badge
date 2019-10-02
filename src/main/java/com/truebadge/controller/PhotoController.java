@@ -3,7 +3,6 @@ package com.truebadge.controller;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
@@ -19,6 +18,7 @@ import com.truebadge.interfaces.MediaFileControllerInterface;
 import com.truebadge.models.MediaFileImpl;
 import com.truebadge.models.Photo;
 import com.truebadge.repositories.PhotoRepository;
+import com.truebadge.util.MediaFileUtil;
 
 @RestController
 @RequestMapping("/photos")
@@ -31,17 +31,8 @@ public class PhotoController implements MediaFileControllerInterface {
 	// Upload Photo
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
-		try {
-			Photo demoPhoto = new Photo();
-			demoPhoto.setTitle(title);
-			demoPhoto.setImage(new Binary(BsonBinarySubType.BINARY, multipart.getBytes()));
-			repository.save(demoPhoto);
-			System.out.println(demoPhoto);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "failure";
-		}
-		return "success";
+		String photoId = MediaFileUtil.uploadPhoto(repository, title, multipart);
+		return photoId;
 	}
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)

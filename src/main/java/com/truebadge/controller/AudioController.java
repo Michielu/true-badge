@@ -3,7 +3,6 @@ package com.truebadge.controller;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
@@ -19,6 +18,7 @@ import com.truebadge.interfaces.MediaFileControllerInterface;
 import com.truebadge.models.Audio;
 import com.truebadge.models.MediaFileImpl;
 import com.truebadge.repositories.AudioRepository;
+import com.truebadge.util.MediaFileUtil;
 
 @RestController
 @RequestMapping("/audios")
@@ -31,17 +31,8 @@ public class AudioController implements MediaFileControllerInterface{
 	// Upload Audio
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
-		try {
-			Audio demoAudio = new Audio();
-			demoAudio.setTitle(title);
-			demoAudio.setAudio(new Binary(BsonBinarySubType.BINARY, multipart.getBytes()));
-			repository.save(demoAudio);
-			System.out.println(demoAudio);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "failure";
-		}
-		return "success";
+		String audioId = MediaFileUtil.uploadAudio(repository, title, multipart);
+		return audioId;
 	}
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
@@ -77,5 +68,7 @@ public class AudioController implements MediaFileControllerInterface{
 	    	return "failure - could not get audio";
 	    }
 	}
+	
+	
 
 }
