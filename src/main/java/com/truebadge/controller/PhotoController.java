@@ -37,7 +37,7 @@ public class PhotoController implements MediaFileControllerInterface {
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
 	public String retrieveFile(@RequestBody JSONObject id){
-	    MediaFileImpl demoPhoto = repository.findBy_id(new ObjectId((String)id.get("id")));
+	    MediaFileImpl demoPhoto = MediaFileUtil.retrievePhoto(repository, (String)id.get("id"));
 	    Binary document = ((Photo)demoPhoto).getImage();
 	    String title = demoPhoto.getTitle();
 	    try {

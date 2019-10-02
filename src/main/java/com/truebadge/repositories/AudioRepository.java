@@ -9,5 +9,5 @@ import com.truebadge.models.Photo;
 
 @Repository
 public interface AudioRepository  extends MongoRepository<Audio, String> {
-	public Photo findBy_id(ObjectId _id);
+	public Audio findBy_id(ObjectId _id);
 }

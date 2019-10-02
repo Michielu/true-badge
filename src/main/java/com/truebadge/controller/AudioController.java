@@ -37,7 +37,10 @@ public class AudioController implements MediaFileControllerInterface{
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
 	public String retrieveFile(@RequestBody JSONObject id){
-	    MediaFileImpl demoAudio = repository.findBy_id(new ObjectId((String)id.get("id")));
+	    MediaFileImpl demoAudio = MediaFileUtil.retrieveAudio(repository, (String)id.get("id"));
+	    
+	    
+	    //This is all a temporary way to retreieve it
 	    Binary document = ((Audio) demoAudio).getAudio();
 	    String title = demoAudio.getTitle();
 	    try {
