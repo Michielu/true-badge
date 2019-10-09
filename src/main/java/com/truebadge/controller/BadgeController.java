@@ -23,7 +23,7 @@ import com.truebadge.util.MediaFileUtil;
 
 @RestController
 @RequestMapping("/badge")
-public class BadgeController{
+public class BadgeController {
 	@Autowired
 	private BadgeRepository repository;
 	@Autowired
@@ -31,7 +31,6 @@ public class BadgeController{
 	@Autowired
 	private PhotoRepository photoRepo;
 
-	
 	private String LOCAL_DESKTOP = "/Users/michielu/Desktop/";
 
 	// Upload Badge
@@ -40,12 +39,12 @@ public class BadgeController{
 		try {
 			String audioId = MediaFileUtil.uploadAudio(audioRepo, title, audio);
 			String photoId = MediaFileUtil.uploadPhoto(photoRepo, title, photo);
-			
+
 			Badge badge = new Badge();
 			badge.setAudioId(audioId);
 			badge.setPhotoId(photoId);
 			badge.setName(title);
-		
+
 			repository.save(badge);
 			System.out.println(badge.get_id());
 		} catch (Exception e) {
@@ -59,7 +58,8 @@ public class BadgeController{
 	public String retrieveFile(@RequestBody JSONObject id){
 		//Get Badge object
 	    Badge badge = repository.findBy_id(new ObjectId((String)id.get("id")));
-
+	    Photo photo;
+	    Audio audio ;
 	    try {
 	    	if(badge!=null) {
 	    		String name = badge.getName();
@@ -67,57 +67,29 @@ public class BadgeController{
     		    String audioId = badge.getAudioId();
     		    
     		    
-    		    Photo photo = MediaFileUtil.retrievePhoto(photoRepo, photoId);
-    		    Audio audio =  MediaFileUtil.retrieveAudio(audioRepo, audioId);
+    		     photo = MediaFileUtil.retrievePhoto(photoRepo, photoId);
+    		     audio =  MediaFileUtil.retrieveAudio(audioRepo, audioId);
     		    
     		    //TODO do tests on these  files 
     		    // audio title and badge title should match
-    		    // should not be nulls 
-    		    
+    		    // nulls 
+		   
+
+				//Get Audio
+ 			    Binary document = ((Audio) audio).getAudio();
+ 			    String title = audio.getTitle();
+ 			    
+ 			    
+				//Get Photo
+			    
+			    
+    		     return "success?";
 	    	}
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	    	return "failure - could not get badge";
 	    }
-	   
-	    
-	    
-	    
-		
-		//Get Audio
-		
-		//Get Photo
-		
-		
-	    Binary document = ((Audio) demoAudio).getAudio();
-	    String title = demoAudio.getTitle();
-	    try {
-	    	 if(document != null) {
-	    		 //Testing by printing out to desktop
-	 	        FileOutputStream fileOuputStream = null;
-	 	        try {
-	 	            fileOuputStream = new FileOutputStream(LOCAL_DESKTOP +title+".m4a"); // store extention? -- not needed bc I'll never download it like this
-	 	            fileOuputStream.write(document.getData());
-	 	        } catch (Exception e) {
-	 	            e.printStackTrace();
-	 	            return "failure - filtoutputstream writing error"; //TODO handle failures better 
-	 	        } finally {
-	 	            if (fileOuputStream != null) {
-	 	                try {
-	 	                    fileOuputStream.close();
-	 	                } catch (IOException e) {
-	 	                    e.printStackTrace();
-	 	                    return "failure - could not close filestream";
-	 	                }
-	 	            }
-	 	        }
-	 	    }
-	 	    return "success - audio retrieved";
-
-	    } catch(Exception e) {
-	    	e.printStackTrace();
-	    	return "failure - could not get audio";
-	    }
+		return null;
 	}
 
 }
