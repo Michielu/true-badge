@@ -18,6 +18,7 @@ import com.truebadge.interfaces.MediaFileControllerInterface;
 import com.truebadge.models.MediaFileImpl;
 import com.truebadge.models.Photo;
 import com.truebadge.repositories.PhotoRepository;
+import com.truebadge.util.JSONConverterUtil;
 import com.truebadge.util.MediaFileUtil;
 
 @RestController
@@ -30,9 +31,9 @@ public class PhotoController implements MediaFileControllerInterface {
 	
 	// Upload Photo
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
-		String photoId = MediaFileUtil.uploadPhoto(repository, title, multipart);
-		return photoId;
+	public JSONObject singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
+		 JSONObject photoIdJSON= MediaFileUtil.uploadPhoto(repository, title, multipart);
+		return photoIdJSON;
 	}
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)

@@ -37,12 +37,12 @@ public class BadgeController {
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public String singleFileUpload(MultipartFile audio, MultipartFile photo, String title) {
 		try {
-			String audioId = MediaFileUtil.uploadAudio(audioRepo, title, audio);
-			String photoId = MediaFileUtil.uploadPhoto(photoRepo, title, photo);
+			JSONObject audioIdJSON = MediaFileUtil.uploadAudio(audioRepo, title, audio);
+			JSONObject photoIdJSON = MediaFileUtil.uploadPhoto(photoRepo, title, photo);
 
 			Badge badge = new Badge();
-			badge.setAudioId(audioId);
-			badge.setPhotoId(photoId);
+			badge.setAudioId((String)photoIdJSON.get("audioId"));
+			badge.setPhotoId((String)photoIdJSON.get("photoId"));
 			badge.setName(title);
 
 			repository.save(badge);

@@ -3,6 +3,8 @@ package com.truebadge.models;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
+
+//This is a test class... shouldn't need this much longer
 public class Pets {
 	@Id
 	public ObjectId _id;

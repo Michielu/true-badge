@@ -30,15 +30,14 @@ public class AudioController implements MediaFileControllerInterface{
 
 	// Upload Audio
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
-	public String singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
-		String audioId = MediaFileUtil.uploadAudio(repository, title, multipart);
-		return audioId;
+	public JSONObject singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
+		JSONObject audioIdJSON= MediaFileUtil.uploadAudio(repository, title, multipart);
+		return audioIdJSON;
 	}
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
 	public String retrieveFile(@RequestBody JSONObject id){
 	    MediaFileImpl demoAudio = MediaFileUtil.retrieveAudio(repository, (String)id.get("id"));
-	    
 	    
 	    //This is all a temporary way to retreieve it
 	    Binary document = ((Audio) demoAudio).getAudio();
