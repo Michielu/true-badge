@@ -37,7 +37,7 @@ public class PhotoController implements MediaFileControllerInterface {
 	}
 
 	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
-	public String retrieveFile(@RequestBody JSONObject id){
+	public JSONObject retrieveFile(@RequestBody JSONObject id){
 	    MediaFileImpl demoPhoto = MediaFileUtil.retrievePhoto(repository, (String)id.get("id"));
 	    Binary document = ((Photo)demoPhoto).getImage();
 	    String title = demoPhoto.getTitle();
@@ -50,23 +50,24 @@ public class PhotoController implements MediaFileControllerInterface {
 	 	            fileOuputStream.write(document.getData());
 	 	        } catch (Exception e) {
 	 	            e.printStackTrace();
-	 	            return "failure - filtoutputstream writing error"; //TODO handle failures better 
+	 	            
+	 	            return JSONConverterUtil.convertToJSON(false, "failure - filtoutputstream writing error");
 	 	        } finally {
 	 	            if (fileOuputStream != null) {
 	 	                try {
 	 	                    fileOuputStream.close();
 	 	                } catch (IOException e) {
 	 	                    e.printStackTrace();
-	 	                    return "failure - could not close filestream";
+	 		 	            return JSONConverterUtil.convertToJSON(false, "failure - could not close filestream");
 	 	                }
 	 	            }
 	 	        }
 	 	    }
-	 	    return "success - image retrieved";
+	            return JSONConverterUtil.convertToJSON(true, "success - image retrieved");
 
 	    } catch(Exception e) {
 	    	e.printStackTrace();
-	    	return "failure - could not get photo";
+	    	return JSONConverterUtil.convertToJSON(false , "failure - could not get photo");
 	    }
 	}
 

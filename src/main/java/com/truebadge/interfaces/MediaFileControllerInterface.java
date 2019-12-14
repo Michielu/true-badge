@@ -7,6 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MediaFileControllerInterface {
 	public JSONObject singleFileUpload(MultipartFile multipart, @RequestParam("title") String title);
-	public String retrieveFile(@RequestBody JSONObject id);
+	public JSONObject retrieveFile(@RequestBody JSONObject id);
 }
 

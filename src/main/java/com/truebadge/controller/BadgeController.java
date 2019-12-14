@@ -1,8 +1,5 @@
 package com.truebadge.controller;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.bson.types.Binary;
 import org.bson.types.ObjectId;
 import org.json.simple.JSONObject;
@@ -41,7 +38,7 @@ public class BadgeController {
 			JSONObject photoIdJSON = MediaFileUtil.uploadPhoto(photoRepo, title, photo);
 
 			Badge badge = new Badge();
-			badge.setAudioId((String)photoIdJSON.get("audioId"));
+			badge.setAudioId((String)audioIdJSON.get("audioId"));
 			badge.setPhotoId((String)photoIdJSON.get("photoId"));
 			badge.setName(title);
 

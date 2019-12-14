@@ -18,59 +18,61 @@ import com.truebadge.interfaces.MediaFileControllerInterface;
 import com.truebadge.models.Audio;
 import com.truebadge.models.MediaFileImpl;
 import com.truebadge.repositories.AudioRepository;
+import com.truebadge.util.JSONConverterUtil;
 import com.truebadge.util.MediaFileUtil;
 
 @RestController
 @RequestMapping("/audios")
-public class AudioController implements MediaFileControllerInterface{
+public class AudioController implements MediaFileControllerInterface {
 	@Autowired
 	private AudioRepository repository;
-	
+
 	private String LOCAL_DESKTOP = "/Users/michielu/Desktop/";
 
 	// Upload Audio
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	public JSONObject singleFileUpload(MultipartFile multipart, @RequestParam("title") String title) {
-		JSONObject audioIdJSON= MediaFileUtil.uploadAudio(repository, title, multipart);
+		JSONObject audioIdJSON = MediaFileUtil.uploadAudio(repository, title, multipart);
 		return audioIdJSON;
 	}
 
-	@RequestMapping(value="/retrieve" ,method = RequestMethod.POST)
-	public String retrieveFile(@RequestBody JSONObject id){
-	    MediaFileImpl demoAudio = MediaFileUtil.retrieveAudio(repository, (String)id.get("id"));
-	    
-	    //This is all a temporary way to retreieve it
-	    Binary document = ((Audio) demoAudio).getAudio();
-	    String title = demoAudio.getTitle();
-	    try {
-	    	 if(document != null) {
-	    		 //Testing by printing out to desktop
-	 	        FileOutputStream fileOuputStream = null;
-	 	        try {
-	 	            fileOuputStream = new FileOutputStream(LOCAL_DESKTOP +title+".m4a"); // store extention? -- not needed bc I'll never download it like this
-	 	            fileOuputStream.write(document.getData());
-	 	        } catch (Exception e) {
-	 	            e.printStackTrace();
-	 	            return "failure - filtoutputstream writing error"; //TODO handle failures better 
-	 	        } finally {
-	 	            if (fileOuputStream != null) {
-	 	                try {
-	 	                    fileOuputStream.close();
-	 	                } catch (IOException e) {
-	 	                    e.printStackTrace();
-	 	                    return "failure - could not close filestream";
-	 	                }
-	 	            }
-	 	        }
-	 	    }
-	 	    return "success - audio retrieved";
+	@RequestMapping(value = "/retrieve", method = RequestMethod.POST)
+	public JSONObject retrieveFile(@RequestBody JSONObject id) {
+		MediaFileImpl demoAudio = MediaFileUtil.retrieveAudio(repository, (String) id.get("id"));
 
-	    } catch(Exception e) {
-	    	e.printStackTrace();
-	    	return "failure - could not get audio";
-	    }
+		// This is all a temporary way to retreieve it
+		Binary document = ((Audio) demoAudio).getAudio();
+		String title = demoAudio.getTitle();
+		try {
+			if (document != null) {
+				// Testing by printing out to desktop
+				FileOutputStream fileOuputStream = null;
+				try {
+					fileOuputStream = new FileOutputStream(LOCAL_DESKTOP + title + ".m4a"); // store extention? -- not
+																							// needed bc I'll never
+																							// download it like this
+					fileOuputStream.write(document.getData());
+				} catch (Exception e) {
+					e.printStackTrace(); // TODO handle failures better
+					return JSONConverterUtil.convertToJSON(false, "failure - filtoutputstream writing error");
+				} finally {
+					if (fileOuputStream != null) {
+						try {
+							fileOuputStream.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+							return JSONConverterUtil.convertToJSON(false, "failure - could not close filestream");
+						}
+					}
+				}
+			}
+			return JSONConverterUtil.convertToJSON(true, "success - audio retrieved");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return JSONConverterUtil.convertToJSON(false, "failure - could not get audio");
+
+		}
 	}
-	
-	
 
 }
